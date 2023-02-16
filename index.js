@@ -18,16 +18,16 @@ const replaceId = () => {
 
       rl.on('line', (line) => {
         json.testCasesKey.map((testCase) => {
-          let regex = new RegExp('\\' + 'b' + testCase.BEESPAE + '\\' + 'b');
+          const regex = new RegExp('\\' + 'b' + testCase.BEESPAE + '\\' + 'b');
           if (line.search(regex) >= 0) {
             console.log(`Replacing ${testCase.BEESPAE}`);
             line = line.replace(testCase.BEESPAE, testCase.BEESQM);
           }
         });
-        ws.write(line + '\n');
+        ws.write(`${line}\r\n`);
       });
 
-      rl.on('close', function () {
+      rl.on('close', () => {
         ws.close();
       });
     });
