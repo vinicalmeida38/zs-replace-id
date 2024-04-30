@@ -1,3 +1,3 @@
 {
-    "testCasesFolder": ""
+    "testCasesFolder": "../Repos/bees-hub-dlb-lever-mfe/component-test/cypress/e2e/TouchpointsStepper/TouchpointsStepper.cy.ts"
 }

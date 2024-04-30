@@ -1,8 +1,10 @@
 {
   "scripts": {
-    "replace-ids": "node index.js"
+    "replace-ids": "node index.js",
+    "start": "node readCsvUtils.js"
   },
   "dependencies": {
-    "glob": "^7.2.0"
+    "glob": "^7.2.0",
+    "papaparse": "^5.4.1"
   }
 }
