@@ -11,8 +11,3 @@ When the MFE sends a POST /audiences
 |}								|
 Then the MFE should get a 201 Created
 And The response payload should be equal to the StopLight documentation ""https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=post-v1-save-audiences"""
-BEESOQA-T2,Validate POST /audiences without requestTraceId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESPAE-11585,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
-When the MFE send a POST /audiences without requestTraceId in the header
-Then the MFE should get a 400 Bad Request
-And The error code should be ""ACA-1""
-And The message should be ""invalid 'requesTraceId'"""

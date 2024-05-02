@@ -2,7 +2,7 @@ Key,Name,Status,Precondition,Objective,Folder,Priority,Component,Labels,Owner,Es
 BEESQM-T55487,Validate POST /v1/csv-audiences with invalid Authorization,Deprecated,,,/BEES Engage (BEESAM),High,,Audman-Custom-Audience-Service,60df8269285656006aa49f24,,BEESAM-11636,,false,false,,false,false,NO,117,CE-Spaten,API (Java),Integration Test,BR,,,,,,,,,"Given the MFE have access to Audman Custom Audience Service
 When The MFE send a POST /v1/csv-audiences with invalid Authorization in the header
 Then The MFE should get a 401 Unauthorized error"
-BEESQM-T55629,Validate POST /audiences schema response payload,Manual,,,/BEES Engage (BEESAM),High,,"Audman-Custom-Audience-Service, POST-/v1/audiences",60df8269285656006aa49f24,,"BEESAM-11639, BEESPAE-11585, BEESAM-15140",,,,,,,NO,117,CE-Spaten,API (Java),Component Test,BR,,,,,,,,,"iven the MFE have access Audman Custom Audience Service
+BEESQM-T55629,Validate POST /audiences schema response payload,Manual,,,/BEES Engage (BEESAM),High,,"Audman-Custom-Audience-Service, POST-/v1/audiences",60df8269285656006aa49f24,,"BEESAM-11639, BEESPAE-11585, BEESAM-15140",,,,,,,NO,117,CE-Spaten,API (Java),Component Test,BR,,,,,,,,,"Given the MFE have access Audman Custom Audience Service
 When the MFE sends a POST /audiences
 |{								|
 |    ""name"": ""audience 1"",		|

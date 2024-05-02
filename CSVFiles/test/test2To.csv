@@ -1,0 +1,957 @@
+Key,Name,Status,Precondition,Objective,Folder,Priority,Component,Labels,Owner,Estimated Time,Coverage (Issues),Coverage (Pages),Team Name,Technology,Test Type,Zones,Test Script (Step-by-Step) - Step,Test Script (Step-by-Step) - Test Data,Test Script (Step-by-Step) - Expected Result,Test Script (Plain Text),Test Script (BDD)
+BEESOQA-T1,Validate POST /audiences schema response payload,Interactive,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,"BEESAM-11639, BEESPAE-11585, BEESAM-15140",,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /audiences
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv"",|
+|    ""profile"": ""OFFER_CREATOR"",|
+|    ""popApply"": false			|
+|}								|
+Then the MFE should get a 201 Created
+And The response payload should be equal to the StopLight documentation ""https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=post-v1-save-audiences"""
+BEESOQA-T2,Validate POST /audiences without requestTraceId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESPAE-11585,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a POST /audiences without requestTraceId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-1""
+And The message should be ""invalid 'requesTraceId'"""
+BEESOQA-T3,Validate POST /audiences without country,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESPAE-11585,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a POST /audiences without country in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-2""
+And The message should be ""invalid 'country'"""
+BEESOQA-T4,Validate POST /audiences with empty body,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESPAE-11585,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /audiences with empty body
+|{}|
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [""name: must not be null""]"
+BEESOQA-T5,Validate POST /audiences without the requirements fields,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESPAE-11585,,Sales Drivers 4,API (Java),Component,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /audiences without the requirements fields
+|{							|
+|    ""fileName"": ""string"",	|
+|    ""popApply"": false,		|
+|}							|
+Then the MFE should get a 400 Bad Request
+And The error code should be ""3""
+And The message should be ""Malformed Request""
+And The details should show the required fields missing
+|APIM: https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=post-v1-save-audiences|"
+BEESOQA-T6,Validate POST /audiences without vendorId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESPAE-11585,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a POST /audiences without vendorId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-3""
+And The message should be ""invalid 'vendorId'"""
+BEESOQA-T7,Validate POST /audiences sending only the requireds fields,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESPAE-11585,,Sales Drivers 4,API (Java),Component,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /audiences with all possible fields
+|{							|
+|    ""filterId"": ""string"",	|
+|    ""isCsv"": true,			|
+|    ""name"": ""string"",		|
+|    ""profile"": ""string""	|
+|}							|
+Then the MFE should get a 201 Created
+And the information sent must be saved in the dataBase customAudiencesBR
+|response	|customAudiencesBR	|
+|filterId	|filterId			|
+|isCsv		|isCsv				|
+|name		|name				|
+|profile	|profile			|"
+BEESOQA-T8,Validate POST /audiences sending a name that already exists in the database,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESPAE-11585,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+And existe an audience save with the name ""Audiance 1""
+When the MFE sends a POST /audiences with empty body
+|{""name"": ""Audiance 1""}|
+Then the MFE should get a 409 Conflict
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [""AudienceName already exists in database for country XX""]"
+BEESOQA-T9,Validate PUT /audiences/{audienceId} without requestTraceId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESPAE-11615,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a PUT /audiences/{audienceId} without requestTraceId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-1""
+And The message should be ""invalid 'requesTraceId'"""
+BEESOQA-T10,Validate PUT /audiences/{audienceId} without country,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESPAE-11615,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a PUT /audiences/{audienceId} without country in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-2""
+And The message should be ""invalid 'country'"""
+BEESOQA-T11,Validate PUT /audiences/{audienceId} with empty body,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESPAE-11615,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/{audienceId} with empty body
+|{}|
+Then the MFE should get a 400 Bad Request
+And The error code should be ""3""
+And The message should be ""invalid request""
+And The details should be [""name: must not be null""]"
+BEESOQA-T12,Validate PUT /audiences/{audienceId} without vendorId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESPAE-11615,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a PUT /audiences/{audienceId} without vendorId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-3""
+And The message should be ""invalid 'vendorId'"""
+BEESOQA-T13,Validate PUT /audiences/{audienceId} schema response payload,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,"BEESPAE-11615, BEESAM-15390",,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/{audienceId} without the requirements fields
+|{														|
+|  ""name"": ""Dennis the 2 CSV"",							|
+|  ""filterId"": ""4b8ba2e9-09c3-4d88-977e-ce57d0b94155"",	|
+|  ""fileName"": ""teste_261523.txt"",						|
+|  ""isCsv"": true,										|
+|  ""popApply"": true										|
+|}														|
+Then the MFE should get a 200 OK
+And The response payload should be equal to the StopLight documentation ""https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=put-v1-edit-audiences"""
+BEESOQA-T14,Validate PUT /audiences/{audienceId} data response validate,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,"BEESPAE-11615, BEESAM-15390",,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/{audienceId} with all possible fields
+|{														|
+|  ""name"": ""Dennis the 2 CSV"",							|
+|  ""filterId"": ""4b8ba2e9-09c3-4d88-977e-ce57d0b94155"",	|
+|  ""fileName"": ""teste_261523.txt"",						|
+|  ""isCsv"": true,										|
+|  ""popApply"": true										|
+|}														|
+Then the MFE should get a 200 OK
+And The data response must meet with the below table
+|response	|customAudiencesBR	|Observations								|
+|id			|_id				||
+|name		|name				||
+|filterId	|filterId			||
+|fileName	|fileName			||
+|isCsv		|isCsv				||
+|popApply	|popApply			||
+|createdAt	|createdAt			| must be the date and time the audience was created|
+|updatedAt	|updatedAt			| must be the date and time the put was run|
+|filterId	|filterId			| |"
+BEESOQA-T15,Validate PUT /audiences/{audienceId} sending a name that already exists in the database,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESPAE-11615,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+And existe an audience with id ""123"" save with the name ""Audiance 1""
+When the MFE sends a PUT /audiences/456
+|{""name"": ""Audiance 1""}|
+Then the MFE should get a 409 Conflict
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [""The name Audiance 1 already exists""]"
+BEESOQA-T16,Validate PUT /audiences/{audienceId} sending a not existing audienceId,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESPAE-11615,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/notExistingId
+Then the MFE should get a 404 Not Found"
+BEESOQA-T17,Validate POST /audiences using the CSV account upload,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESAM-11639,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access to Audman Custom Audience Service
+And We have data with the filterId ""abc123"" in the tempCsvLoaded_{country} dataBase
+When the MFE sends a POST /audiences
+|{							|
+|    ""name"": ""audience 1""	|
+|    ""isCSV"": true			|
+|    ""filterId"": abc123		|
+|}							|
+Then the MFE should get a 201 Created
+And the information sent must be saved in the dataBase customAudiencesBR
+|response	|customAudiencesBR	|
+|name		|name				|
+|isCSV		|isCSV				|
+|filterId	|filterId			|"
+BEESOQA-T18,Validate GET /v1/audiences/{audienceId} without requestTraceId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - GET /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11641,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Service
+When the MFE send a GET /v1/custom-audience/audiences/{audienceId} requestTraceId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header requestTraceId 'null' is not valid"""
+BEESOQA-T19,Validate GET /v1/audiences/{audienceId} without country,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - GET /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11641,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Service
+When the MFE send a GET /v1/custom-audience/audiences/{audienceId} without country in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header country 'null' is not valid"""
+BEESOQA-T20,Validate GET /v1/audiences/{audienceId} without vendorId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - GET /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11641,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Service
+When the MFE send a GET /v1/audiences/{audienceId} without vendorId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header vendorId 'null' is not valid"""
+BEESOQA-T21,Validate GET /v1/csv-audiences/{filterId} without requestTraceId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - GET /v1/csv-audiences/{filterId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11923,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Service
+When the MFE send a GET /v1/csv-audiences/{filterId} requestTraceId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header requestTraceId 'null' is not valid"""
+BEESOQA-T22,Validate GET /v1/csv-audiences/{filterId} without country,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - GET /v1/csv-audiences/{filterId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11923,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Service
+When the MFE send a GET /v1/csv-audiences/{filterId} without country in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header country 'null' is not valid"""
+BEESOQA-T23,Validate GET /v1/csv-audiences/{filterId} data response payload sending the param includeAccounts as 'True',Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - GET /v1/csv-audiences/{filterId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11923,,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access to Audman Custom Audience Service
+When the BFF send a GET /v1/csv-audiences/{filterId}?includeAccounts=true
+Then the BFF should get a 200 Ok
+And the response payload should be equal to the mongo database AudienceManagementCustomAudience.csvAudiences_BR collection
+|AudMan Custom Audience Service	| AudienceManagementCustomAudience.csvAudiences_BR	|						
+|filterId						|filterId											|
+|isCsv							|isCsv												|
+|accountIds						|accountIds											|"
+BEESOQA-T24,Validate GET /v1/csv-audiences/{filterId} data response payload sending the param includeAccounts as 'false',Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - GET /v1/csv-audiences/{filterId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11923,,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access to Audman Custom Audience Service
+When the BFF send a GET /v1/csv-audiences/{filterId}?includeAccounts=false
+Then the BFF should get a 200 Ok
+And the response payload should be equal to the mongo database AudienceManagementCustomAudience.csvAudiences_BR collection
+|AudMan Custom Audience Service	| AudienceManagementCustomAudience.csvAudiences_BR	|						
+|filterId						|filterId											|
+|isCsv							|isCsv												|"
+BEESOQA-T25,Validate GET /v1/csv-audiences/{filterId} sending a not existing filterId,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - GET /v1/csv-audiences/{filterId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11923,,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access to Audman Custom Audience Service
+When the BFF send a GET /v1/csv-audiences/{filterId}
+Then the BFF should get a 200 Ok
+And the filterId was not found, the list of the account should be empty and the field isCSV is false"
+BEESOQA-T26,"Validate PUT /audiences/{audienceId} new filterId ""isCsv"" = true and the previous filterId was ""isCsv"" = true",Automated,,,/Sales Drivers/Back-end,Normal,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11677,,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access Audman Custom Audience Service
+And has the below data in the csvAudiences_BR
+|{												|    
+|    ""_id"": {									|
+|        ""$oid"": ""644c07bbcf18fd62f15f5f42""		|
+|    },											|
+|    ""filterId"": ""abcdef"",						|
+|    ""accountId"": ""1223334444"",					|
+|    ""createdAt"": {								|
+|        ""$date"": {								|
+|            ""$date"": ""2023-07-03T20:00:41.483Z""|
+|        }										|
+|    }											|
+|},												|
+|{												|    
+|    ""_id"": {									|
+|        ""$oid"": ""644c07bbcf18fd62f15f5f42""		|
+|    },											|
+|    ""filterId"": ""123456"",						|
+|    ""accountId"": ""741""							|
+|    ""createdAt"": {								|
+|        ""$date"": {								|
+|            ""$date"": ""2023-07-03T22:12:41.483Z""|
+|        }										|
+|    }											|
+|}												|
+And has the below data in the tempCsvLoaded_BR
+|{												|    
+|    ""_id"": {									|
+|        ""$oid"": ""644c07bbcf18fd62f15f5f42""		|
+|    },											|
+|    ""filterId"": ""123456"",						|
+|    ""createdAt"": {								|
+|        ""$date"": {								|
+|            ""$date"": ""2023-07-03T22:12:41.483Z""|
+|        }										|
+|    }											|
+|}												|
+And has the below data in the customAudiencesBR
+|{												|
+|    ""_id"": {									|
+|        ""$oid"": ""645a47fbec3aeb6ec3113eeb""		|
+|    },											|
+|    ""name"": ""Test Audience"",					|
+|    ""filterId"": ""abcdef"",						|
+|    ""isCSV"": true,								|
+|    ""createdAt"": {								|
+|        ""$date"": ""2023-07-03T16:51:09.822Z""	|
+|    },											|
+|    ""updatedAt"": {								|
+|        ""$date"": ""2023-07-03T16:51:09.822Z""	|
+|    }											|
+|}												|
+When the BFF sends a PUT /audiences/{audienceId} with the below data
+|{									|
+|    ""name"": ""Test Audience"",		|
+|    ""filterId"": ""123456""			|
+|    ""isCsv"": true					|
+|    ""fileName"": ""test.csv""			|
+|}									|
+Then the BFF should get a 200 OK
+And the data in the ""tempCsvLoaded_BR"" linked to the filterId ""123456"" sent mus be deleted
+And the data linked to the filterId ""abcdef"" must be insert in the database ""tempCsvLoaded_BR"" with the same creation date used in the csvAudiences_BR
+|{												|    
+|    ""_id"": {									|
+|        ""$oid"": ""644c07bbcf18fd62f15f5f42""		|
+|    },											|
+|    ""filterId"": ""abcdef"",						|
+|    ""createdAt"": {								|
+|        ""$date"": {								|
+|            ""$date"": ""2023-07-03T20:00:41.483Z""|
+|        }										|
+|    }											|
+|}												|"
+BEESOQA-T27,Validate PUT /audiences/{audienceId} without the requirements fields,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,"BEESPAE-11615, BEESAM-11677",,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/{audienceId} without the requirements fields
+|{							|
+|    ""fileName"": ""test.csv""	|
+|}							|
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-3""
+And The message should be ""invalid request""
+And The details should be [""name: must not be blank"", ""filterId: must not be blank"", ""isCsv: must not be blank""]"
+BEESOQA-T28,"Validate PUT /audiences/{audienceId} new filterId ""isCsv"" = false and the previous filterId was ""isCsv"" = true",Automated,,,/Sales Drivers/Back-end,Normal,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11677,,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access Audman Custom Audience Service
+And has the below data in the csvAudiences_BR
+|{												|    
+|    ""_id"": {									|
+|        ""$oid"": ""644c07bbcf18fd62f15f5f42""		|
+|    },											|
+|    ""filterId"": ""123456"",						|
+|    ""accountId"": ""741""							|
+|    ""createdAt"": {								|
+|        ""$date"": {								|
+|            ""$date"": ""2023-07-03T22:12:41.483Z""|
+|        }										|
+|    }											|
+|}												|
+And has the below data in the customAudiencesBR
+|{												|
+|    ""_id"": {									|
+|        ""$oid"": ""645a47fbec3aeb6ec3113eeb""		|
+|    },											|
+|    ""name"": ""Test Audience"",					|
+|    ""filterId"": ""123456"",						|
+|    ""isCSV"": true,								|
+|    ""createdAt"": {								|
+|        ""$date"": ""2023-07-03T16:51:09.822Z""	|
+|    },											|
+|    ""updatedAt"": {								|
+|        ""$date"": ""2023-07-03T16:51:09.822Z""	|
+|    }											|
+|}												|
+When the BFF sends a PUT /audiences/{audienceId} with the below data
+|{									|
+|    ""name"": ""Test Audience"",		|
+|    ""filterId"": ""abc789"",			|
+|    ""isCsv"": false					|
+|}									|
+Then the BFF should get a 200 OK
+And the data linked to the filterId ""123456"" must be insert in the database ""tempCsvLoaded_BR"" with the same creation date used in the csvAudiences_BR
+|{												|    
+|    ""_id"": {									|
+|        ""$oid"": ""644c07bbcf18fd62f15f5f42""		|
+|    },											|
+|    ""filterId"": ""123456"",						|
+|    ""createdAt"": {								|
+|        ""$date"": {								|
+|            ""$date"": ""2023-07-03T22:12:41.483Z""|
+|        }										|
+|    }											|
+|}												|"
+BEESOQA-T29,"Validate PUT /audiences/{audienceId} new filterId ""isCsv"" = true and the previous filterId was ""isCsv"" = false",Automated,,,/Sales Drivers/Back-end,Normal,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-11677,,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access Audman Custom Audience Service
+And has the below data in the csvAudiences_BR
+|{												|    
+|    ""_id"": {									|
+|        ""$oid"": ""644c07bbcf18fd62f15f5f42""		|
+|    },											|
+|    ""filterId"": ""123456"",						|
+|    ""accountId"": ""741""							|
+|    ""createdAt"": {								|
+|        ""$date"": {								|
+|            ""$date"": ""2023-07-03T22:12:41.483Z""|
+|        }										|
+|    }											|
+|}												|
+And has the below data in the tempCsvLoaded_BR
+|{												|    
+|    ""_id"": {									|
+|        ""$oid"": ""644c07bbcf18fd62f15f5f42""		|
+|    },											|
+|    ""filterId"": ""123456"",						|
+|    ""createdAt"": {								|
+|        ""$date"": {								|
+|            ""$date"": ""2023-07-03T22:12:41.483Z""|
+|        }										|
+|    }											|
+|}												|
+And has the below data in the customAudiencesBR
+|{												|
+|    ""_id"": {									|
+|        ""$oid"": ""645a47fbec3aeb6ec3113eeb""		|
+|    },											|
+|    ""name"": ""Test Audience"",					|
+|    ""filterId"": ""abcdef"",						|
+|    ""isCSV"": false,							|
+|    ""createdAt"": {								|
+|        ""$date"": ""2023-07-03T16:51:09.822Z""	|
+|    },											|
+|    ""updatedAt"": {								|
+|        ""$date"": ""2023-07-03T16:51:09.822Z""	|
+|    }											|
+|}												|
+When the BFF sends a PUT /audiences/645a47fbec3aeb6ec3113eeb with the below data
+|{									|
+|    ""name"": ""Test Audience"",		|
+|    ""filterId"": ""123456""			|
+|    ""isCsv"": true					|
+|    ""fileName"": ""test.csv""			|
+|}									|
+Then the BFF should get a 200 OK
+And the data in the ""tempCsvLoaded_BR"" linked to the filterId ""123456"" sent mus be deleted"
+BEESOQA-T30,Validate PUT /audiences/{audienceId} sending only the requireds fields,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,"BEESPAE-11615, BEESAM-11677, BEESAM-15390",,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/{audienceId} with all possible fields
+|{							|
+|    ""name"": ""audience 1"",	|
+|    ""filterId"": ""filterId"",|
+|    ""isCsv"": true			|
+|}							|
+Then the MFE should get a 200 OK
+And only the name must be updated
+|response	|customAudiencesBR	|
+|name		|name				|
+|filterId	|filterId			|
+|isCsv		|isCsv				|"
+BEESOQA-T31,Validate GET /v1/audiences loading the field estimatedPoc when isCsv = true,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - GET /v1/audiences,Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-12108,,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access to Audman Custom Audience Business Service
+And has the below data in the ""customAudiencesBR""
+|{											|
+|    ""_id"": {								|
+|        ""$oid"": ""ID01""						|
+|    },										|
+|    ""name"": ""Audience Test CSV"",			|
+|    ""filterId"": ""FI101"",					|
+|    ""isCsv"": true,							|
+|    ""estimatedPoc"": 2,						|
+|    ""createdAt"": {							|
+|        ""$date"": ""2023-05-08T16:51:09.822Z""|
+|    },										|
+|    ""updatedAt"": {							|
+|        ""$date"": ""2023-05-08T16:51:09.822Z""|
+|    }										|
+|},											|
+|{											|
+|    ""_id"": {								|
+|        ""$oid"": ""ID02""						|
+|    },										|
+|    ""name"": ""Audience Test synapse"",		|
+|    ""filterId"": ""FI102"",					|
+|    ""isCsv"": false,						|
+|    ""createdAt"": {							|
+|        ""$date"": ""2023-05-08T16:51:09.822Z""|
+|    },										|
+|    ""updatedAt"": {							|
+|        ""$date"": ""2023-05-08T16:51:09.822Z""|
+|    }										|
+|}											|
+When the BFF send a GET /v1/custom-audience/audiences
+Then the BFF should get a 200 Ok
+And For the audience with id ""ID01"", the service needs to retrieve the estimatedPoc value from the database and display the value ""2""."
+BEESOQA-T32,Validate POST /audiences saving the field estimatedPoc when isCsv = true,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESAM-12108,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /audiences with the below body
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv""	|
+|}								|
+Then the MFE should get a 201 Created
+And The service's objective is to calculate the sum of all accounts linked to the filterId ""123456"" and save or update the result in the ""estimatedPoc"" field
+|When the isCsv parameter is false, the service must fetch the estimatedPoc value from the ""api/audience-management-custom-filter/v1/filters?filtersId=FI102"" endpoint.|"
+BEESOQA-T33,Validate PUT /audiences/{audienceId} saving the field estimatedPoc when isCsv = true,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-12108,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/{audienceId}
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv""	|
+|}								|
+Then the MFE should get a 200 OK
+And The service's must do the sum of all accounts linked to the filterId ""123456"" and save or update the result in the ""estimatedPoc"" field
+|When the isCsv parameter is false, the service must fetch the estimatedPoc value from the ""api/audience-management-custom-filter/v1/filters?filtersId=FI102"" endpoint.|"
+BEESOQA-T34,Validate PUT /audiences/{audienceId} deleting the field estimatedPoc when isCsv = false,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-12108,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/{audienceId}
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""96258"",		|
+|    ""isCsv"": false				|
+|}								|
+Then the MFE should get a 200 OK
+And The service must do the delete of the ""estimatedPoc"" field value in the database
+|When the isCsv parameter is false, the service must fetch the estimatedPoc value from the ""api/audience-management-custom-filter/v1/filters?filtersId=FI102"" endpoint.|"
+BEESOQA-T35,Validate POST /audiences when is sent a filter already linked to another audience (Toggle == ON),Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESAM-13244,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+And the toggle ""toggleAssignFilterIdToAudienceId"" is on
+And the filterId ""123456"" is already linked to audience ""abcd""
+When the MFE sends a POST /audiences
+|{																			|
+|    ""name"": ""audience {{$randomCompanyName}} the {{$randomBsAdjective}}"",	|
+|    ""filterId"": ""123456"",													|
+|    ""isCsv"": true,															|
+|    ""fileName"": ""file.csv""													|
+|}																			|
+Then the MFE should get the status code 409 Conflict and the audience can't be created"
+BEESOQA-T36,Validate POST /audiences when is sent a filter already linked to another audience (Toggle == OFF),Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESAM-13244,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+And the toggle ""toggleAssignFilterIdToAudienceId"" is OFF
+And the filterId ""95f31edf-3194-4c6b-acff-ca39faf2ad4d6"" is already linked to audience ""abcd""
+When the MFE sends a POST /audiences
+|{																			|
+|    ""name"": ""audience {{$randomCompanyName}} the {{$randomBsAdjective}}"",	|
+|    ""filterId"": ""95f31edf-3194-4c6b-acff-ca39faf2ad4d6"",					|
+|    ""isCsv"": true,															|
+|    ""fileName"": ""file.csv""													|
+|}																			|
+Then the MFE should get a 201 Created
+And the audienceId must be different than the filterId sent"
+BEESOQA-T37,Validate POST /audiences created an audience with audienceId == filterId (Toggle == ON),Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESAM-13244,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+And the toggle ""toggleAssignFilterIdToAudienceId"" is on
+And the filterId ""7890"" is not linked to any audience
+When the MFE sends a POST /audiences
+|{																			|
+|    ""name"": ""audience {{$randomCompanyName}} the {{$randomBsAdjective}}"",	|
+|    ""filterId"": ""7890"",													|
+|    ""isCsv"": true,															|
+|    ""fileName"": ""file.csv""													|
+|}																			|
+Then the MFE should get the status code 201 Created
+And the audienceId must be equal to the filterId sent"
+BEESOQA-T38,Validate PUT /audiences/{audienceId} when estimatedPoc is equal zero,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-13824,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/456
+And the estimatedPoc is equal zero
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [""The estimated POC should be above zero.""]"
+BEESOQA-T39,Validate POST /audiences when estimatedPoc is equal zero,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESAM-13823,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /audiences
+And the estimatedPoc is equal zero
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [""The estimated POC should be above zero.""]"
+BEESOQA-T40,Validate POST /audiences data response validate,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,"BEESPAE-11585, BEESAM-11639, BEESAM-15140",,Sales Drivers 4,API (Java),Component,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /audiences with all possible fields
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv"",|
+|    ""profile"": ""OFFER_CREATOR"",|
+|    ""popApply"": true			|
+|}								|
+Then the MFE should get a 201 Created
+And The data response must meet with the below table
+|response	|customAudiences_{country}	|Observations								|
+|id			|_id						||
+|name		|name						||
+|filterId	|filterId					||
+|isCsv		|isCsv						||
+|fileName	|fileName					||
+|profile	|profile					||
+|popApply	|true						||
+|createdAt	|createdAt					| must be the date and time the post was run|
+|updatedAt	|updatedAt					| must be the date and time the post was run|
+|links		|null						||"
+BEESOQA-T41,"Validate POST /audiences not sending the field ""popApply""",Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,BEESAM-15140,,Sales Drivers 4,API (Java),Component,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /audiences with all possible fields
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv""	|
+|}								|
+Then the MFE should get a 201 Created
+And the field popApply must be saved as false in the database"
+BEESOQA-T42,Validate POST /audiences schema response payload,Interactive,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v1/audiences,"Audman-Custom-Audience-Service, POST-/v1/audiences",6019403ca7fb40006934e56f,,"BEESAM-11639, BEESPAE-11585, BEESAM-15140",,Sales Drivers 4,API (Java),Component,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /audiences
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv"",|
+|    ""profile"": ""OFFER_CREATOR"",|
+|    ""popApply"": false			|
+|}								|
+Then the MFE should get a 201 Created
+And The response payload should be equal to the StopLight documentation ""https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=post-v1-save-audiences"""
+BEESOQA-T43,Validate PATCH /v1/audiences/{audienceId} without Authorization,Interactive,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PATCH /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16797,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience
+When The MFE send a PATCH /v1/audiences/{audienceId} without Authorization in the header
+Then The MFE should get a 403 Forbidden"
+BEESOQA-T44,Validate PATCH /v1/audiences/{audienceId} without requestTraceId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PATCH /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16797,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a PATCH /v1/audiences/{audienceId} without requestTraceId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header requestTraceId 'null' is not valid"""
+BEESOQA-T45,Validate PATCH /v1/audiences/{audienceId} without country,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PATCH /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16797,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a PATCH /v1/audiences/{audienceId} without country in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header country 'null' is not valid"""
+BEESOQA-T46,Validate PATCH /v1/audiences/{audienceId} with empty body,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PATCH /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16797,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/{audienceId} with empty body
+|{}|
+Then the MFE should get a 204 No Content"
+BEESOQA-T47,Validate PATCH /v1/audiences/{audienceId} without vendorId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PATCH /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16797,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a PATCH /v1/audiences/{audienceId} without vendorId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header vendorId 'null' is not valid"""
+BEESOQA-T48,Validate PATCH /v1/audiences/{audienceId} sending a not existing audienceId,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PATCH /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16797,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PATCH /v1/audiences/{audienceId}
+Then the MFE should get a 404 Not Found"
+BEESOQA-T49,Validate PATCH /v1/audiences/{audience} trying edit an processed audience,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PATCH /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16797,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+And we have the audience 123 set as processed
+When the MFE sends a PUT /audiences/123
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [""Audience with status processed cannot be changed""]"
+BEESOQA-T50,Validate PATCH /v1/audiences/{audience} sending an invalid status,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PATCH /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16797,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /audiences/123
+|{|
+|""status"": ""invalid""|
+|}|
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [""Status: ivalid value. Alowed values: 'Processing', 'Processed', 'Not Processed'""]"
+BEESOQA-T51,Validate PATCH /v1/audiences/{audienceId} sending a valid Status,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PATCH /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16797,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+And we have the audience 123 with status ""not processed""
+When the MFE sends a PUT /audiences/123
+|{						|
+|""status"": ""processed""	|
+|}						|
+Then the MFE should get a 204 No Content"
+BEESOQA-T52,Validate POST /v2/audiences without Authorization,Interactive,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience
+When The MFE send a POST /v2/audiences without Authorization in the header
+Then The MFE should get a 403 Forbidden"
+BEESOQA-T53,Validate POST /v2/audiences without requestTraceId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a POST /v2/audiences without requestTraceId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-1""
+And The message should be ""invalid 'requesTraceId'"""
+BEESOQA-T54,Validate POST /v2/audiences without country,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a POST /v2/audiences without country in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-2""
+And The message should be ""invalid 'country'"""
+BEESOQA-T55,Validate POST /v2/audiences with empty body,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences with empty body
+|{}|
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [ ""name: must not be blank"", ""profile: must not be blank""]"
+BEESOQA-T56,Validate POST /v2/audiences without the requirements fields (traits),Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences without the requirements fields (traits)
+|{							|
+|    ""fileName"": ""string"",	|
+|    ""popApply"": false,		|
+|}							|
+Then the MFE should get a 400 Bad Request
+And The error code should be ""3""
+And The message should be ""Malformed Request""
+And The details should show the required fields missing
+|APIM: https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=post-v2-save-audiences|"
+BEESOQA-T57,Validate POST /v2/audiences without vendorId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a POST /v2/audiences without vendorId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-3""
+And The message should be ""invalid 'vendorId'"""
+BEESOQA-T58,Validate POST /v2/audiences sending only the requireds fields (Traits),Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences with all possible fields
+|{											|
+|  ""name"": ""Dennis {{randomInt}} POST V2"",	|
+|  ""filterId"": ""123456"",					|
+|  ""profile"": ""teste"",						|
+|  ""popApply"": false						|
+|}											|
+Then the MFE should get a 201 Created
+And the information sent must be saved in the dataBase customAudiences{{country}}"
+BEESOQA-T59,Validate POST /v2/audiences sending a name that already exists in the database,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+And existe an audience save with the name ""Audiance 1""
+When the MFE sends a POST /v2/audiences with empty body
+|{""name"": ""Audiance 1""}|
+Then the MFE should get a 409 Conflict
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [""AudienceName already exists in database for country XX""]"
+BEESOQA-T60,"Validate POST /v2/audiences setting the status as ""PROCESSED"" when the isCsv = FALSE",Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences
+|{									|
+|  ""isCsv"": false,					|
+|  ""filterId"": ""123456"",			|
+|  ""name"": ""Teste {{randomInt}}"",	|
+|  ""profile"": ""teste_profile""		|
+|}									|
+Then the MFE should get a 201 Created
+And the status of the audience must be saved as ""PROCESSED"" in the database"
+BEESOQA-T61,Validate POST /v2/audiences data response validate,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences with all possible fields
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv"",|
+|    ""profile"": ""OFFER_CREATOR"",|
+|    ""popApply"": true			|
+|}								|
+Then the MFE should get a 201 Created
+And The data response must meet with the below table
+|response	|customAudiences_{country}	|Observations								|
+|id			|_id						||
+|name		|name						||
+|filterId	|filterId					||
+|isCsv		|isCsv						||
+|fileName	|fileName					||
+|profile	|profile					||
+|popApply	|true						||
+|profile	|profile					||
+|createdAt	|createdAt					| must be the date and time the post was run|
+|updatedAt	|updatedAt					| must be the date and time the post was run|
+|links		|null						||"
+BEESOQA-T62,"Validate POST /v2/audiences not sending the field ""popApply""",Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv""	|
+|}								|
+Then the MFE should get a 201 Created
+And the field popApply must be saved as false in the database"
+BEESOQA-T63,Validate POST /v2/audiences schema response payload,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv"",|
+|    ""profile"": ""OFFER_CREATOR"",|
+|    ""popApply"": false			|
+|}								|
+Then the MFE should get a 201 Created
+And The response payload should be equal to the StopLight documentation ""https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=post-v2-save-audiences"""
+BEESOQA-T64,Validate POST /v2/audiences without the requirements fields (CSV),Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences without the requirements fields (CSV)
+|{							|
+|  ""isCsv"": true,			|
+|  ""fileName"": ""Teste"",		|
+|  ""filterId"": ""123456"",	|
+|  ""popApply"": false		|
+|}							|
+Then the MFE should get a 400 Bad Request
+And The error code should be ""3""
+And The message should be ""Malformed Request""
+And The details should show the required fields missing
+|APIM: https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=post-v2-save-audiences|"
+BEESOQA-T65,Validate POST /v2/audiences sending only the required fields (CSV),Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences with all possible fields
+|{											|
+|  ""name"": ""Dennis {{randomInt}} POST V2"",	|
+|  ""profile"": ""teste"",						|
+|  ""popApply"": false						|
+|}											|
+Then the MFE should get a 201 Created
+And the information sent must be saved in the dataBase customAudiences{{country}}"
+BEESOQA-T66,"Validate POST /v2/audiences setting the status as ""PROCESSING"" when the isCsv = TRUE",Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - POST/v2/audiences,"Audman-Custom-Audience-Service, POST-/v2/audiences",6019403ca7fb40006934e56f,,BEESAM-16794,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences
+|{									|
+|  ""isCsv"": true,					|
+|  ""filterId"": ""123456"",			|
+|  ""name"": ""Teste {{randomInt}}"",	|
+|  ""profile"": ""teste_profile"",		|
+|  ""fileName"": ""teste.csv""				|
+|}									|
+Then the MFE should get a 201 Created
+And the status of the audience must be saved as ""PROCESSING"" in the database"
+BEESOQA-T67,Validate PUT /v2/audiences/{{audienceId}} without Authorization,Interactive,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience
+When The MFE send a PUT /v2/audiences/{{audienceId}} without Authorization in the header
+Then The MFE should get a 403 Forbidden"
+BEESOQA-T68,Validate PUT /v2/audiences/{{audienceId}} without requestTraceId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a PUT /v2/audiences/{{audienceId}} without requestTraceId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-1""
+And The message should be ""invalid 'requesTraceId'"""
+BEESOQA-T69,Validate PUT /v2/audiences/{{audienceId}} without country,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a PUT /v2/audiences/{{audienceId}} without country in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-2""
+And The message should be ""invalid 'country'"""
+BEESOQA-T70,Validate PUT /v2/audiences/{{audienceId}} with empty body,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /v2/audiences/{{audienceId}} with empty body
+|{}|
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [ ""name: must not be blank"", ""profile: must not be blank""]"
+BEESOQA-T71,Validate PUT /v2/audiences/{{audienceId}} without the requirements fields,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a POST /v2/audiences without the requirements fields (traits)
+|{							|
+|    ""fileName"": ""string"",	|
+|    ""popApply"": false,		|
+|	 ""filterId"": ""12315464""	|
+|}							|
+Then the MFE should get a 400 Bad Request
+And The error code should be ""3""
+And The message should be ""Malformed Request""
+And The details should show the required fields missing
+|APIM: https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=put-v2-edit-audiences|"
+BEESOQA-T72,Validate PUT /v2/audiences/{{audienceId}} without vendorId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE send a PUT /v2/audiences/{{vendorId}} without vendorId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""ACA-3""
+And The message should be ""invalid 'vendorId'"""
+BEESOQA-T73,Validate PUT /v2/audiences/{{audienceId}} sending only the requireds fields,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /v2/audiences/{{audienceId}} with all possible fields
+|{					|
+|  ""isCSV"": true,	|
+|  ""name"": ""123456""	|
+|}					|
+Then the MFE should get a 200 OK
+And the information sent must be saved in the dataBase customAudiences{{country}}"
+BEESOQA-T74,Validate PUT /v2/audiences/{{audienceId}} sending a name that already exists in the database,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+And existe an audience save with the name ""Audiance 1""
+When the MFE sends a PUT /v2/audiences/{{audienceId}} with empty body
+|{""name"": ""Audiance 1""}|
+Then the MFE should get a 409 Conflict
+And The error code should be ""ACA-4""
+And The message should be ""invalid request""
+And The details should be [""AudienceName already exists in database for country XX""]"
+BEESOQA-T75,Validate PUT /v2/audiences/{{audienceId}} data response validate,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /v2/audiences/{{audienceId}} with all possible fields
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv"",|
+|    ""popApply"": true			|
+|}								|
+Then the MFE should get a 200 OK
+And The data response must meet with the below table
+|response	|customAudiences_{country}	|Observations								|
+|id			|_id						||
+|name		|name						||
+|filterId	|filterId					||
+|isCsv		|isCsv						||
+|fileName	|fileName					||
+|profile	|profile					||
+|popApply	|true						||
+|profile	|profile					||
+|createdAt	|createdAt					| must be the date and time the post was run|
+|updatedAt	|updatedAt					| must be the date and time the post was run|
+|links		|null						||"
+BEESOQA-T76,"Validate PUT /v2/audiences/{{audienceId}} not sending the field ""popApply""",Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /v2/audiences/{{audienceId}}
+|{								|
+|    ""name"": ""audience 1"",		|
+|    ""filterId"": ""123456"",		|
+|    ""isCsv"": true,				|
+|    ""fileName"": ""accounts.csv"",|
+|    ""name"": ""Teste name"",	 	|
+|}								|
+Then the MFE should get a 200 OK
+And the field popApply must be saved as false in the database"
+BEESOQA-T77,Validate PUT /v2/audiences/{{audienceId}} schema response payload,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a PUT /v2/audiences/{{audienceId}}
+|{							|
+|    ""fileName"": ""string"",	|
+|    ""filterId"": ""string"",	|
+|    ""isCsv"": true,			|
+|    ""name"": ""string"",		|
+|    ""popApply"": false		|
+|}							|
+Then the MFE should get a 200 OK
+And The response payload should be equal to the documentation ""https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=put-v2-edit-audiences"""
+BEESOQA-T78,Validate PUT /v2/audiences/{{audienceId}} not editing the audience status,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PUT /v2/audiences/{audienceId},"Audman-Custom-Audience-Service, PUT-/v2/audiences/{{audienceId}}",6019403ca7fb40006934e56f,,BEESAM-16795,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom Audience Service
+And we have the audience 123456 with the status set as ""NOT_PROCESSED""
+When the MFE sends a PUT /v2/audiences/123456
+|{									|
+|  ""isCsv"": true,					|
+|  ""filterId"": ""123456"",			|
+|  ""name"": ""Teste {{randomInt}}"",	|
+|  ""profile"": ""teste_profile"",		|
+|  ""fileName"": ""teste.csv""			|
+|}									|
+Then the MFE should get a 200 OK
+And the status of the audience cannot be changed in the database"
+BEESOQA-T79,Validate GET /v1/audiences/{{audienceId}} schema response payload,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - GET /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,"BEESAM-11641, BEESAM-15141, BEESAM-16819",,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom to Audman Custom Audience Service
+When the MFE sends a GET /v1/audiences/{{audienceId}}
+Then the MFE should get a 200 OK
+And The response payload should be equal to the documentation ""https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=getAudienceById"""
+BEESOQA-T80,Validate GET /v1/audiences/{{audienceId}} data response payload,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - GET /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,"BEESAM-11641, BEESAM-15141, BEESAM-16819",,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access to Audman Custom Audience Service
+When the BFF send a GET /v1/audiences/{{audienceId}}
+Then the BFF should get a 200 Ok
+And the response payload should be equal to the mongo database AudienceManagementCustomAudience.csvAudiences_BR collection
+|AudMan Custom Audience Service	| AudienceManagementCustomAudience.csvAudiences_BR	|						
+|id								|_id												|
+|name							|name												|
+|createdAt						|createdAt											|
+|updatedAt						|updatedAt											|
+|filterId						|filterId											|
+|isCsv							|isCsv												|
+|fileName						|fileName											|
+|popApply						|popApply											|
+|status							|status												|
+|links.vendor					|links.vendor										|
+|links.origin					|links.origin										|
+|links.originId					|links.originId										|
+|links.allowRemoval				|links.allowRemoval									|"
+BEESOQA-T81,Validate GET /v1/audiences schema response payload,Interactive,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - GET /v1/audiences,Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16818,,Sales Drivers 4,API (Java),,BR,,,,,"iven the MFE have access Audman Custom Audience Service
+When the MFE sends a GET /v1/audiences
+Then the MFE should get a 200 OK
+And the schema response payload should be equal to the documentation ""https://developer-sit.bees-platform.dev/api-details#api=audience-management-custom-audience-service-shared-sit&operation=listAllAudiencessUsingGET"""
+BEESOQA-T82,Validate GET /v1/audiences data response payload,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - GET /v1/audiences,Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16818,,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access to Audman Custom Audience Service
+When the BFF send a GET /v1/audiences
+Then the BFF should get a 200 Ok
+And the response payload should be equal to the mongo database AudienceManagementCustomAudience.customAudiencesMX collection
+|Audman Custom Audience Business Service	| AudienceManagementCustomAudience.customAudiencesMX	|OBS	|						
+|id											|_id													||
+|name										|name													||
+|filterId									|filterId												||
+|isCsv										|isCsv													||
+|fileName									|fileName												||
+|popApply									|popApply												||
+|estimatedPoc								|estimatedPoc											|This field will be available in the database only when the isCsv field is set to true.|
+|links										|links													||
+|createdAt									|createdAt												||
+|updatedAt									|updatedAt												||"
+BEESOQA-T83,Validate GET /v1/audiences sending the status (Rever),Interactive,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - GET /v1/audiences,Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,,,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access to Audman Custom Audience Service
+When the BFF send a GET /v1/audiences
+Then the BFF should get a 200 Ok
+And the response payload should be equal to the mongo database AudienceManagementCustomAudience.customAudiencesMX collection
+|Audman Custom Audience Business Service	| AudienceManagementCustomAudience.customAudiencesMX	|OBS	|						
+|id											|_id													||
+|name										|name													||
+|filterId									|filterId												||
+|isCsv										|isCsv													||
+|fileName									|fileName												||
+|popApply									|popApply												||
+|estimatedPoc								|estimatedPoc											|This field will be available in the database only when the isCsv field is set to true.|
+|links										|links													||
+|createdAt									|createdAt												||
+|updatedAt									|updatedAt												||"
+BEESOQA-T84,Validate PATCH /v1/csv-audiences/{audienceId} sending a non-existent audienceId,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PATCH /v1/csv-audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16823,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom to Audman Custom Audience Service
+And the audienceId 852 not exist in the database
+When the MFE sends a PATCH /v1/csv-audiences/852
+Then the MFE should get a 404 Not Found
+And the message must be ""Audience with id:852 wasn't found"""
+BEESOQA-T85,Validate PATCH /v1/csv-audiences/{audienceId} without Authorization,Interactive,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PATCH /v1/csv-audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16823,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Business Service
+When The MFE send a PATCH /v1/csv-audiences/{audienceId} without Authorization in the header
+Then The MFE should get a 403 Forbidden"
+BEESOQA-T86,Validate PATCH /v1/csv-audiences/{audienceId} without requestTraceId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PATCH /v1/csv-audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16823,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Business Service
+When the MFE send a PATCH /v1/csv-audiences/{audienceId} requestTraceId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header requestTraceId 'null' is not valid"""
+BEESOQA-T87,Validate PATCH /v1/csv-audiences/{audienceId} without country,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PATCH /v1/csv-audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16823,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Business Service
+When the MFE send a PUT /v1/csv-audiences/{audienceId} without country in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header country 'null' is not valid"""
+BEESOQA-T88,Validate PATCH /v1/csv-audiences/{audienceId} without vendorId,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PATCH /v1/csv-audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16823,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Business Service
+When the MFE send a Validate PATCH /v1/csv-audiences/{audienceId} without vendorId in the header
+Then the MFE should get a 400 Bad Request
+And The error code should be ""5""
+And The message should be ""The header vendorId 'null' is not valid"""
+BEESOQA-T89,Validate PATCH /v1/csv-audiences/{audienceId} editing an audience with an not allowed status,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PATCH /v1/csv-audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16823,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Service
+And has the audience 123 with status PROCESSED
+When the MFE send a PATCH /v1/csv-audiences/123
+Then response status code has to be 400 Bad Request
+And message must be ""Only Audience with status 'NOT PROCESSED' or 'PROCESSED WITH ERRORS' can be changed"""
+BEESOQA-T90,Validate PATCH /v1/csv-audiences/{audienceId} data response payload,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PATCH /v1/csv-audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16823,,Sales Drivers 4,API (Java),,BR,,,,,"Given the BFF have access to Audman Custom Audience Service
+When the BFF send a PATCH /v1/csv-audiences/{audienceId}
+Then the BFF should get a 200 OK
+And the response payload should be equal to the below board
+|/v1/csv-audiences/{audienceId}	| dataBase	|
+|audienceId						|id			|
+|name							|name		|
+|fileName						|fileName	|"
+BEESOQA-T91,Validate PATCH /v1/csv-audiences/{audienceId} schema response payload,Automated,,,/Sales Drivers/Back-end,High,[BE] audman-custom-audience-service - PATCH /v1/csv-audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16823,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access Audman Custom to Audman Custom Audience Service
+When the MFE sends a PATCH /v1/csv-audiences/{audienceId}
+Then the MFE should get a 200 OK
+And The response payload should be equal to the StopLight documentation ""??"""
+BEESOQA-T92,Validate PATCH /v1/csv-audiences/{audienceId} not sending the required fields,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - PATCH /v1/csv-audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-16823,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Service
+When the MFE send a PATCH /v1/csv-audiences/{audienceId} without the required fields
+Then the response status code has to be 400 Bad Request
+And message must show the required fields missing"
+BEESOQA-T93,Validate GET /v1/audiences/{audienceId} without vendorId in the data base,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - GET /v1/audiences/{audienceId},Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,"BEESAM-11641, BEESAM-18941",,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Service
+And the audinceId ""Example123"" doesn't have the vendorId in the data base
+When the MFE send a GET /v1/audiences/Example123
+Then the MFE should get a 404 Not Found
+And the message should be ""Audience with id 'Example123' was not found"""
+BEESOQA-T94,Validate GET /v1/audiences without vendorId in the data base,Automated,,,/Sales Drivers/Back-end,Low,[BE] audman-custom-audience-service - GET /v1/audiences,Audman-Custom-Audience-Service,6019403ca7fb40006934e56f,,BEESAM-18940,,Sales Drivers 4,API (Java),,BR,,,,,"Given the MFE have access to Audman Custom Audience Service
+And the audinceId ""Example123"" doesn't have the vendorId
+When the MFE send a GET all /v1/audiences
+Then the MFE should get a 200 OK
+And the audinces with vendorId null will not be returned"
