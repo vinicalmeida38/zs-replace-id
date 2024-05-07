@@ -15,10 +15,10 @@ const processLineFunction = (line, lineEnding) => {
     const { from, to } = keys;
     const [fromProjectId, fromId] = from.split("-");
     const [toProjectId, toId] = to.split("-");
-
+    
     const FROM_ID_CHECK_REGEX = new RegExp(`${fromId}`);
     const fromIdExists = line.search(FROM_ID_CHECK_REGEX) >= 0;
-
+    
     if (fromIdExists) {
       console.log(`Replacing ${fromId} with ${toId}`);
       line = line.replace(fromId, toId);

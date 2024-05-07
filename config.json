@@ -1,3 +1,5 @@
 {
-    "testCasesFolder": "../audman-custom-audience/**/*.java"
+  "testCasesFolder": "../Repos/**/*.{java,ts,cy}",
+  "originProjectCSVPath": "./CSVFiles/originProject.csv",
+  "targetProjectCSVPath": "./CSVFiles/targetProject.csv"
 }

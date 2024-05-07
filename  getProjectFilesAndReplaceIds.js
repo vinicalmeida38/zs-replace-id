@@ -14,6 +14,7 @@ const scanProjectFiles = (processFile) => {
       console.error(err);
       return;
     }
+    console.log(`Found ${files.length} files to be scanned`)
 
     files.forEach((file) => processFile(file));
   });

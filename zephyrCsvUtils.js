@@ -1,5 +1,7 @@
 const Papa = require("papaparse");
 const fs = require("fs");
+const config = require("./config.json");
+
 
 const ignoredColumns = [
   "Key",
@@ -39,11 +41,11 @@ function compareData(originProject, targetProject) {
 
 const getOriginToTargetKeyComparison = () => {
   const originProjectCSV = fs.readFileSync(
-    "./CSVFiles/test/originProject.csv",
+    config.originProjectCSVPath,
     "utf8"
   );
   const targetProjectCSV = fs.readFileSync(
-    "./CSVFiles/test/targetProject.csv",
+    config.targetProjectCSVPath,
     "utf8"
   );
 
