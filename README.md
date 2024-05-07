@@ -27,10 +27,10 @@ The code is organized into three files:
 To run the script:
 
 1. **Configure the `config.json` file**: In the `config.json` file, set the `testCasesFolder` property to the path of the directory containing the project files you want to process. For example:
-    - For Java: `"testCasesFolder": "../repository-name/**/*.java"`
-    - For Cypress: `"testCasesFolder": "../repository-name/**/*.cy"`
-    - For Typescript: `"testCasesFolder": "../repository-name/**/*.cy"`
-    - For any of the above: `"testCasesFolder": "../repository-name/**/*.{java,ts,cy}"`
+    - For Java: `"testCasesFolder": "../path-to-repository/**/*.java"`
+    - For Cypress: `"testCasesFolder": "../path-to-repository/**/*.cy"`
+    - For Typescript: `"testCasesFolder": "../path-to-repository/**/*.cy"`
+    - For any of the above: `"testCasesFolder": "../path-to-repository/**/*.{java,ts,cy}"`
 
 2. **Prepare CSV files**: Follow these steps to obtain and prepare the CSV files:
     - Access your Jira project and navigate to the Zephyr Project. In the Test Case tab, export all the test cases of your project as an Excel file.
@@ -42,13 +42,13 @@ To run the script:
 3. **Run the script**: Execute the script using the following command:
 
     ```shell
-    node processFiles.js
+    node index.js
     ```
 
     Alternatively, if you have yarn installed, you can run:
 
     ```shell
-    yarn start
+    yarn replace-ids
     ```
 
 The script will process each file in the specified directory, replacing identifiers in the files based on the comparison between the origin and target project CSV files.
