@@ -1,3 +1,5 @@
 {
-    "testCasesFolder": ""
+  "testCasesFolder": "../Repos/**/*.{java,ts,cy}",
+  "originProjectCSVPath": "./CSVFiles/originProject.csv",
+  "targetProjectCSVPath": "./CSVFiles/targetProject.csv"
 }

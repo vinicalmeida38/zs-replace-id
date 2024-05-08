@@ -1,37 +1,69 @@
-const json = require('./testCasesKey.json');
-const config = require('./config.json');
-const fs = require('fs');
-const readline = require('readline');
-const glob = require('glob');
+const config = require("./config.json");
+const fs = require("fs");
+const readline = require("readline");
+const os = require("os");
+const { scanProjectFiles } = require("./ getProjectFilesAndReplaceIds");
+const {
+  getKeyToKeyComparison,
+  getOriginToTargetKeyComparison,
+} = require("./zephyrCsvUtils");
 
-const replaceId = () => {
-  glob(config.testCasesFolder, (err, files) => {
-    files.map((file) => {
-      const ws = fs.createWriteStream(file, {
-        flags: 'r+',
-        defaultEncoding: 'utf8',
-      });
+const ORIGIN_TO_TARGET_KEY_COMPARISON = getOriginToTargetKeyComparison();
 
-      const rl = readline.createInterface({
-        input: fs.createReadStream(file),
-      });
+const processLineFunction = (line, lineEnding) => {
+  ORIGIN_TO_TARGET_KEY_COMPARISON.forEach((keys) => {
+    const { from, to } = keys;
+    const [fromProjectId, fromId] = from.split("-");
+    const [toProjectId, toId] = to.split("-");
+    
+    const FROM_ID_CHECK_REGEX = new RegExp(`${fromId}`);
+    const fromIdExists = line.search(FROM_ID_CHECK_REGEX) >= 0;
+    
+    if (fromIdExists) {
+      console.log(`Replacing ${fromId} with ${toId}`);
+      line = line.replace(fromId, toId);
+      line = line.replace(fromProjectId, toProjectId);
+    }
+  });
 
-      rl.on('line', (line) => {
-        json.testCasesKey.map((testCase) => {
-          const regex = new RegExp('\\' + 'b' + testCase.BEESPAE + '\\' + 'b');
-          if (line.search(regex) >= 0) {
-            console.log(`Replacing ${testCase.BEESPAE}`);
-            line = line.replace(testCase.BEESPAE, testCase.BEESQM);
-          }
-        });
-        ws.write(`${line}\r\n`);
-      });
+  // Return the processed line with the appropriate line ending
+  return `${line}${lineEnding}`;
+};
 
-      rl.on('close', () => {
-        ws.close();
-      });
+const processFile = (file) => {
+  // Read the entire file and process each line
+  const readStream = fs.createReadStream(file);
+  const readLine = readline.createInterface({
+    input: readStream,
+  });
+
+  const processedLines = [];
+  const buffer = fs.readFileSync(file);
+  const lineEnding = buffer.includes("\r\n") ? "\r\n" : "\n";
+
+  readLine.on("line", (line) => {
+    // Process each line using processLineFunction and collect the result
+    const processedLine = processLineFunction(line, lineEnding);
+    processedLines.push(processedLine);
+  });
+
+  readLine.on("close", () => {
+    // Once all lines have been processed, write them back to the file
+    const writeStream = fs.createWriteStream(file, {
+      flags: "w",
+      defaultEncoding: "utf8",
     });
+
+    processedLines.forEach((line) => {
+      writeStream.write(line);
+    });
+
+    writeStream.end();
   });
 };
 
-replaceId();
+const execute = () => {
+  scanProjectFiles(processFile);
+};
+
+execute();
