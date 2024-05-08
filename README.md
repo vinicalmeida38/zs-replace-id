@@ -39,7 +39,19 @@ To run the script:
     - Go to the new/target project in ZephyrScale and export the test cases as Excel. Convert the file to CSV format and rename it to `targetProject.csv`.
     - Move both CSV files into the `./CSVFiles` folder in the code directory.
 
-3. **Run the script**: Execute the script using the following command:
+3. **Install dependencies** using the following command:
+
+    ```shell
+    npm i
+    ```
+
+    or
+
+    ```shell
+    yarn
+    ```
+
+4. **Run the script**: Execute the script using the following command:
 
     ```shell
     node index.js
