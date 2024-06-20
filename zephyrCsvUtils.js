@@ -2,19 +2,11 @@ const Papa = require("papaparse");
 const fs = require("fs");
 const config = require("./config.json");
 
+const columnsToBeCompared = ["Name"];
 
-const ignoredColumns = [
-  "Key",
-  "Status",
-  "Folder",
-  "Component",
-  "Owner",
-  "Team Name",
-  "Test Type",
-];
 function isMatch(fromCSVRow, toCSVRow) {
   for (let prop in toCSVRow) {
-    if (ignoredColumns.includes(prop)) continue;
+    if (!columnsToBeCompared.includes(prop)) continue;
     if (toCSVRow.hasOwnProperty(prop)) {
       if (fromCSVRow[prop] !== toCSVRow[prop]) {
         return false;
@@ -36,18 +28,13 @@ function compareData(originProject, targetProject) {
     });
   });
 
+  console.log(`Found ${result.length} Zephyr keys to be replaced.`);
   return result;
 }
 
 const getOriginToTargetKeyComparison = () => {
-  const originProjectCSV = fs.readFileSync(
-    config.originProjectCSVPath,
-    "utf8"
-  );
-  const targetProjectCSV = fs.readFileSync(
-    config.targetProjectCSVPath,
-    "utf8"
-  );
+  const originProjectCSV = fs.readFileSync(config.originProjectCSVPath, "utf8");
+  const targetProjectCSV = fs.readFileSync(config.targetProjectCSVPath, "utf8");
 
   const originProject = Papa.parse(originProjectCSV, { header: true }).data;
   const targetProject = Papa.parse(targetProjectCSV, { header: true }).data;

@@ -1,5 +1,5 @@
 {
-  "testCasesFolder": "../Repos/**/*.{java,ts,cy}",
+  "testCasesFolder": "../taxonomy-file-service/**/*.{java,ts,cy,groovy}",
   "originProjectCSVPath": "./CSVFiles/originProject.csv",
   "targetProjectCSVPath": "./CSVFiles/targetProject.csv"
 }
